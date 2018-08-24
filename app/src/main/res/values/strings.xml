@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Cloak &amp; Crafts</string>
+    <string name="action_settings">Settings</string>
+    <string name="location_image">location Image</string>
+
+    <string name="section_cocktails">Cocktail Bars</string>
+    <string name="section_speakeasy">Speakeasy Bars</string>
+    <string name="section_withFood">Cocktail Bars w Food</string>
+
+</resources>
