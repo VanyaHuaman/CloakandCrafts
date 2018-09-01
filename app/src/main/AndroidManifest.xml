@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cloakandcrafts.com.cloakandcrafts">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +25,7 @@
         <activity android:name=".Activities.WithFoodActivity" />
         <activity android:name=".Activities.CocktailsActivity" />
         <activity android:name=".Activities.SpeakeasyActivity" />
+        <activity android:name=".Activities.DetailActivity" />
     </application>
 
 </manifest>
