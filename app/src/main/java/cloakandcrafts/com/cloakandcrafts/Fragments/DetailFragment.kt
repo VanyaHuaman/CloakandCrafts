@@ -62,8 +62,11 @@ class DetailFragment : Fragment(){
             }
         }
 
+
+
+
         rootView.detail_facebookButton.setOnClickListener{
-            openFaceBook(context!!,mLocation.facebookUrl.toString())
+            openFacebook(context!!,mLocation.facebookUrl.toString())
         }
 
         rootView.fabButton.setOnClickListener { view ->
@@ -94,7 +97,7 @@ class DetailFragment : Fragment(){
         startActivity(intents)
     }
 
-    fun openFaceBook(context:Context, url:String){
+    fun openFacebook(context:Context, url:String){
         var facebookUrl:String
         val packageManager:PackageManager = context.packageManager
 

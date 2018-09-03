@@ -5,12 +5,14 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cloakandcrafts.com.cloakandcrafts.Activities.cocktailArray
 import cloakandcrafts.com.cloakandcrafts.Activities.locationsArray
 import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
+import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
 import kotlinx.android.synthetic.main.location_recycler_list.*
 import kotlinx.android.synthetic.main.location_recycler_list.view.*
@@ -26,7 +28,7 @@ class CocktailsFragment : Fragment() {
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+        Log.i("MAINACTIVITY","Cocktail Fragment STARTED!!!!!!!!!!!!!!!!!!")
         val rootView : View =
                 inflater.inflate(R.layout.location_recycler_list, container, false)
 

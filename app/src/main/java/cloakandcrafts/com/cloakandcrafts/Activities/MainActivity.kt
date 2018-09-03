@@ -52,12 +52,17 @@ class MainActivity : AppCompatActivity() {
                         Log.w(TAG, "Error getting documents.", task.exception)
                     }
                     dbReference = db.collection("locations")
-                    locationsArray = buildArrayList()
+                    buildArrayList()
+                    buildWithFoodArray()
+                    buildCocktailArray()
+                    buildSpeakeasyArray()
+
                 }
 
-        buildCocktailArray(locationsArray!!)
-        buildWithFoodArray(locationsArray!!)
-        buildSpeakeasyArray(locationsArray!!)
+
+
+
+
     }//end of on create
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -76,41 +81,55 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun buildArrayList():ArrayList<BarLocation>{
-        var locationsArray : ArrayList<BarLocation> = ArrayList()
+    fun buildArrayList(){
 
         dbReference.get().addOnSuccessListener {
             var location : BarLocation
             for (document in it.documents){
                 location = document.toObject(BarLocation::class.java)!!
-                locationsArray.add(location)
+                locationsArray!!.add(location)
             }
         }
-        return locationsArray
+
     }
 
-    fun buildCocktailArray(locationsArray : ArrayList<BarLocation>){
-        for(location in locationsArray){
-            if(location.speakeasy==false){
-                cocktailArray!!.add(location)
-            }
-        }
-    }
 
-    fun buildWithFoodArray(locationsArray : ArrayList<BarLocation>){
-        for(location in locationsArray){
-            if(location.food==true){
-                withFoodArray!!.add(location)
-            }
-        }
-    }
-
-    fun buildSpeakeasyArray(locationsArray : ArrayList<BarLocation>){
-        for(location in locationsArray){
-            if(location.speakeasy==true){
-                speakeasyArray!!.add(location)
+    fun buildWithFoodArray(){
+        dbReference.get().addOnSuccessListener {
+        var location : BarLocation
+            for (document in it.documents){
+                location = document.toObject(BarLocation::class.java)!!
+                Log.i(TAG,"Food: " + location.food)
+                if (location.food==true) {
+                    withFoodArray!!.add(location)
+                    Log.i(TAG, "ADDED TO FOOD ARRAY")
+                }
             }
         }
     }
 
+
+    fun buildCocktailArray(){
+        dbReference.get().addOnSuccessListener {
+            var location : BarLocation
+            for (document in it.documents){
+                location = document.toObject(BarLocation::class.java)!!
+                if (!location.speakeasy) {
+                    cocktailArray!!.add(location)
+                }
+            }
+        }
+    }
+
+    fun buildSpeakeasyArray(){
+        dbReference.get().addOnSuccessListener {
+            var location : BarLocation
+            for (document in it.documents){
+                location = document.toObject(BarLocation::class.java)!!
+                if (location.speakeasy) {
+                    speakeasyArray!!.add(location)
+                }
+            }
+        }
+    }
 }
