@@ -1,6 +1,8 @@
 package cloakandcrafts.com.cloakandcrafts.Fragments
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -35,12 +37,21 @@ class DetailFragment : Fragment(){
         rootView.detail_locationName.setTextColor(mColor)
         rootView.detail_address.setText(mLocation.address)
         rootView.detail_phoneNumber.setText(mLocation.phoneNumber)
-        rootView.detail_reviewTextView.setText(mLocation.review)
 
+        val hours:String="Hours: ${mLocation.hours}\n\n"
+        rootView.detail_reviewTextView.setText(hours)
+
+        if(mLocation.review!=null) {
+            val stringHolder:String = rootView.detail_reviewTextView.text.toString()
+            val reviewText:String = "${stringHolder} ${mLocation.review}"
+            rootView.detail_reviewTextView.setText(reviewText)
+        }
+
+        //attach downloaded image (possible passed through intent)
 //        if(mLocation.ImageId==null){
 //            rootView.detail_locationImage.visibility = View.GONE
 //        }else {
-//            rootView.detail_locationImage.setImageResource(mLocation.ImageId.toString())
+//            rootView.detail_locationImage.setImageResource(mLocation.imageName)
 //        }
 
         if(mLocation.websiteUrl==null){
@@ -52,18 +63,22 @@ class DetailFragment : Fragment(){
         }
 
         rootView.detail_facebookButton.setOnClickListener{
-            openWebPage(mLocation.facebookUrl.toString())
+            openFaceBook(context!!,mLocation.facebookUrl.toString())
         }
 
-//        fab.setOnClickListener { view ->
-//            val sendIntent: Intent = Intent().apply {
-//                action = Intent.ACTION_SEND
-//                putExtra(Intent.EXTRA_TEXT,
-//                        "${mLocation.name}/n${mLocation.address}/n${mLocation.phoneNumber}")
-//                type = "text/plain"
-//            }
-//            startActivity(Intent.createChooser(sendIntent,null))
-//        }
+        rootView.fabButton.setOnClickListener { view ->
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT,
+                        "${mLocation.name}" +
+                                System.getProperty("line.separator")+
+                                "${mLocation.address}" +
+                                System.getProperty("line.separator")+
+                                "${mLocation.phoneNumber}")
+                type = "text/plain"
+            }
+            startActivity(Intent.createChooser(sendIntent,null))
+        }
 
         return rootView
     }
@@ -77,6 +92,24 @@ class DetailFragment : Fragment(){
         val uris = Uri.parse(url)
         val intents = Intent(Intent.ACTION_VIEW, uris)
         startActivity(intents)
+    }
+
+    fun openFaceBook(context:Context, url:String){
+        var facebookUrl:String
+        val packageManager:PackageManager = context.packageManager
+
+        try {
+            val versionCode:Int=packageManager
+                    .getPackageInfo("com.facebook.katana",0).versionCode
+            if(versionCode >= 3002850){
+                facebookUrl = "fb://facewebmodal/f?href=" + url;
+                val facebookIntent = Intent(Intent.ACTION_VIEW)
+                facebookIntent.data = Uri.parse(facebookUrl)
+                startActivity(facebookIntent)
+            }
+        }catch (e:PackageManager.NameNotFoundException ){
+            openWebPage(url)
+        }
     }
 
 

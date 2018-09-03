@@ -15,7 +15,9 @@ import kotlinx.android.synthetic.main.content_main.*
 
 
 var locationsArray : ArrayList<BarLocation>? = ArrayList()
-
+var cocktailArray: ArrayList<BarLocation>? = ArrayList()
+var speakeasyArray : ArrayList<BarLocation>? = ArrayList()
+var withFoodArray : ArrayList<BarLocation>? = ArrayList()
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,11 +55,10 @@ class MainActivity : AppCompatActivity() {
                     locationsArray = buildArrayList()
                 }
 
-
-
-
-
-    }
+        buildCocktailArray(locationsArray!!)
+        buildWithFoodArray(locationsArray!!)
+        buildSpeakeasyArray(locationsArray!!)
+    }//end of on create
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -88,5 +89,28 @@ class MainActivity : AppCompatActivity() {
         return locationsArray
     }
 
+    fun buildCocktailArray(locationsArray : ArrayList<BarLocation>){
+        for(location in locationsArray){
+            if(location.speakeasy==false){
+                cocktailArray!!.add(location)
+            }
+        }
+    }
+
+    fun buildWithFoodArray(locationsArray : ArrayList<BarLocation>){
+        for(location in locationsArray){
+            if(location.food==true){
+                withFoodArray!!.add(location)
+            }
+        }
+    }
+
+    fun buildSpeakeasyArray(locationsArray : ArrayList<BarLocation>){
+        for(location in locationsArray){
+            if(location.speakeasy==true){
+                speakeasyArray!!.add(location)
+            }
+        }
+    }
 
 }

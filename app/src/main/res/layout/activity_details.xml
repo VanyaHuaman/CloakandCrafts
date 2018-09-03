@@ -61,7 +61,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -120,7 +120,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:adjustViewBounds="false"
             android:background="@android:color/background_light"
             android:cropToPadding="true"
@@ -135,7 +135,7 @@
             android:layout_height="40dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:background="@android:color/background_light"
             android:cropToPadding="true"
             android:scaleType="fitXY"

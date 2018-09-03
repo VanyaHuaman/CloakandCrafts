@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cloakandcrafts.com.cloakandcrafts.Activities.cocktailArray
 import cloakandcrafts.com.cloakandcrafts.Activities.locationsArray
 import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
 import cloakandcrafts.com.cloakandcrafts.R
@@ -35,7 +36,7 @@ class CocktailsFragment : Fragment() {
 
         var recyclerView = rootView.findViewById(R.id.recycler_view) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = RecyclerAdapter(context!!, locationsArray!!,color)
+        recyclerView.adapter = RecyclerAdapter(context!!, cocktailArray!!,color)
 
 
         return rootView
