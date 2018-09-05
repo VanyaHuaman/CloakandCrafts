@@ -9,12 +9,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity
-import cloakandcrafts.com.cloakandcrafts.Activities.withFoodArray
 import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.location_recycler_list.view.*
 
 class WithFoodFragment : Fragment() {
@@ -25,7 +26,9 @@ class WithFoodFragment : Fragment() {
         }
     }
 
-
+    var db : FirebaseFirestore = FirebaseFirestore.getInstance()
+    var dbReference : CollectionReference = db.collection("locations")
+    var mRecyclerAdapter: RecyclerAdapter? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,36 +40,28 @@ class WithFoodFragment : Fragment() {
         val color : Int = ContextCompat.getColor(rootView.context,R.color.section_withFood)
         rootView.sectionTextView.setBackgroundColor(color)
 
-        var foodRecyclerView = rootView.recycler_view as RecyclerView
-        foodRecyclerView!!.layoutManager = LinearLayoutManager(activity)
-        foodRecyclerView!!.adapter = RecyclerAdapter(context!!, withFoodArray!! ,color)
+        var query: Query = dbReference.whereEqualTo("food",true)
 
+        setUpRecyclerView(rootView,query)
 
         return rootView
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
+        mRecyclerAdapter!!.startListening()
     }
 
-    override fun onPause() {
-        super.onPause()
+    fun setUpRecyclerView(v:View,query:Query){
+        val options: FirestoreRecyclerOptions<BarLocation> =
+                FirestoreRecyclerOptions.Builder<BarLocation>()
+                        .setQuery(query,BarLocation::class.java)
+                        .build()
 
-    }
-
-    fun buildWithFoodArray(dbReference:CollectionReference): ArrayList<BarLocation>{
-        dbReference.get().addOnSuccessListener {
-            var location : BarLocation
-            for (document in it.documents){
-                location = document.toObject(BarLocation::class.java)!!
-                Log.i(MainActivity.TAG,"Food: " + location.food)
-                if (location.food) {
-                    withFoodArray!!.add(location)
-                    Log.i(MainActivity.TAG, "ADDED TO FOOD ARRAY")
-                }
-            }
-
-        }
-        return withFoodArray!!
+        mRecyclerAdapter = RecyclerAdapter(options)
+        val recyclerView:RecyclerView = v.findViewById(R.id.recycler_view)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(v.context)
+        recyclerView.adapter = mRecyclerAdapter
     }
 }

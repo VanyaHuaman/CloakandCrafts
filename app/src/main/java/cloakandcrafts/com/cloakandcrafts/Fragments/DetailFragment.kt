@@ -6,9 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import cloakandcrafts.com.cloakandcrafts.Activities.SettingsActivity
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
 import kotlinx.android.synthetic.main.activity_details.view.*
@@ -86,10 +85,14 @@ class DetailFragment : Fragment(){
         return rootView
     }
 
+
+
     fun getIntentData(){
         mColor = activity!!.intent.getIntExtra("color",0)
         mLocation = activity!!.intent.getSerializableExtra("location") as BarLocation
     }
+
+
 
     fun openWebPage(url:String){
         val uris = Uri.parse(url)

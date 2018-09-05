@@ -9,12 +9,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cloakandcrafts.com.cloakandcrafts.Activities.cocktailArray
-import cloakandcrafts.com.cloakandcrafts.Activities.locationsArray
 import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
-import kotlinx.android.synthetic.main.location_recycler_list.*
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.location_recycler_list.view.*
 
 
@@ -26,6 +27,10 @@ class CocktailsFragment : Fragment() {
         }
     }
 
+    var db : FirebaseFirestore = FirebaseFirestore.getInstance()
+    var dbReference : CollectionReference = db.collection("locations")
+    var mRecyclerAdapter:RecyclerAdapter? = null
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.i("MAINACTIVITY","Cocktail Fragment STARTED!!!!!!!!!!!!!!!!!!")
@@ -36,12 +41,29 @@ class CocktailsFragment : Fragment() {
         val color : Int = ContextCompat.getColor(rootView.context,R.color.section_cocktails)
         rootView.sectionTextView.setBackgroundColor(color)
 
-        var recyclerView = rootView.findViewById(R.id.recycler_view) as RecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = RecyclerAdapter(context!!, cocktailArray!!,color)
+        var query:Query = dbReference.whereEqualTo("speakeasy",false)
 
+        setUpRecyclerView(rootView,query)
 
         return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mRecyclerAdapter!!.startListening()
+    }
+
+    fun setUpRecyclerView(v:View,query:Query){
+        val options: FirestoreRecyclerOptions<BarLocation> =
+                FirestoreRecyclerOptions.Builder<BarLocation>()
+                        .setQuery(query,BarLocation::class.java)
+                        .build()
+
+        mRecyclerAdapter = RecyclerAdapter(options)
+        val recyclerView:RecyclerView = v.findViewById(R.id.recycler_view)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(v.context)
+        recyclerView.adapter = mRecyclerAdapter
     }
 
 

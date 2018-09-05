@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
 import cloakandcrafts.com.cloakandcrafts.Adapters.SectionPagerAdapter
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
@@ -22,20 +23,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-
-
-
-
-
-
-var locationsArray : ArrayList<BarLocation>? = ArrayList()
-var cocktailArray: ArrayList<BarLocation>? = ArrayList()
-var speakeasyArray : ArrayList<BarLocation>? = ArrayList()
-var withFoodArray : ArrayList<BarLocation>? = ArrayList()
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 var storage = FirebaseStorage.getInstance()
 var storageRef = storage.reference
@@ -48,9 +39,6 @@ class MainActivity : AppCompatActivity() {
         const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
     }
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    var db : FirebaseFirestore = FirebaseFirestore.getInstance()
-    var dbReference : CollectionReference = db.collection("locations")
-
     var milesValue:Int? = null
     var userLocation:Location= Location("userLocation")
 
@@ -68,23 +56,6 @@ class MainActivity : AppCompatActivity() {
 
         milesValue = getPrefMiles()
 
-        db.collection("locations")
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for (document in task.result) {
-                            Log.d(TAG, document.id + " => " + document.data)
-                        }
-                    } else {
-                        Log.w(TAG, "Error getting documents.", task.exception)
-                    }
-                    dbReference = db.collection("locations")
-                    buildArrayList()
-                    buildWithFoodArray()
-                    buildCocktailArray()
-                    buildSpeakeasyArray()
-
-                }
     }//end of on create
 
     override fun onStart() {
@@ -95,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             getLastLocation()
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -154,70 +126,6 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return false
-    }
-
-    fun buildArrayList(){
-        dbReference.get().addOnSuccessListener {
-            var location : BarLocation
-            for (document in it.documents){
-                location = document.toObject(BarLocation::class.java)!!
-                if(isInRange(location.latitude!!,location.latitude!!)){
-                    locationsArray!!.add(location)
-                }
-            }
-        }
-
-    }
-
-
-    fun buildWithFoodArray(){
-        dbReference.get().addOnSuccessListener {
-        var location : BarLocation
-            for (document in it.documents){
-                location = document.toObject(BarLocation::class.java)!!
-                Log.i(TAG,"Food: " + location.food)
-                if (location.food) {
-                    if(isInRange(location.latitude!!,location.longitude!!)){
-                        withFoodArray!!.add(location)
-                        Log.i(TAG, "ADDED TO FOOD ARRAY")
-                    }
-                }
-            }
-            Log.i(TAG,"WithFoodArray Built")
-        }
-
-    }
-
-
-    fun buildCocktailArray(){
-        dbReference.get().addOnSuccessListener {
-            var location : BarLocation
-            for (document in it.documents){
-                location = document.toObject(BarLocation::class.java)!!
-                if (!location.speakeasy) {
-                    if(isInRange(location.latitude!!,location.longitude!!)){
-                        cocktailArray!!.add(location)
-                    }
-                }
-            }
-            Log.i(TAG,"Cocktail Array Built")
-        }
-
-    }
-
-    fun buildSpeakeasyArray(){
-        dbReference.get().addOnSuccessListener {
-            var location : BarLocation
-            for (document in it.documents){
-                location = document.toObject(BarLocation::class.java)!!
-                if (location.speakeasy) {
-                    if(isInRange(location.latitude!!,location.longitude!!)){
-                        speakeasyArray!!.add(location)
-                    }
-                }
-            }
-            Log.i(TAG,"Speakeasy Array Built")
-        }
     }
 
     @SuppressLint("MissingPermission")
