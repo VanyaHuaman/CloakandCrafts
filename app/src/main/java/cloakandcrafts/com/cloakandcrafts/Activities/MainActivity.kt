@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
@@ -23,12 +24,22 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+
+
+
+
 
 
 var locationsArray : ArrayList<BarLocation>? = ArrayList()
 var cocktailArray: ArrayList<BarLocation>? = ArrayList()
 var speakeasyArray : ArrayList<BarLocation>? = ArrayList()
 var withFoodArray : ArrayList<BarLocation>? = ArrayList()
+
+var storage = FirebaseStorage.getInstance()
+var storageRef = storage.reference
+var  imagesRef : StorageReference= storageRef.child("locationImages")
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     var dbReference : CollectionReference = db.collection("locations")
+
     var milesValue:Int? = null
     var userLocation:Location= Location("userLocation")
 
@@ -95,7 +107,24 @@ class MainActivity : AppCompatActivity() {
                 openSettings()
                 return true
             }
+            R.id.action_contact -> {
+                openEmail()
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun openEmail() {
+        val emailAddress= arrayOf("Contact@cloakandcrafts.com")
+        val emailSubject = "Cloak & Crafts"
+
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse("mailto:") // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL,emailAddress)
+        intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
         }
     }
 

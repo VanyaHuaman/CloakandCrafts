@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cloakandcrafts.com.cloakandcrafts.Activities.DetailActivity
+import cloakandcrafts.com.cloakandcrafts.Activities.imagesRef
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R.layout.list_item
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.list_item.view.*
+
 
 class RecyclerAdapter(
         val context:Context,
@@ -42,7 +45,9 @@ class RecyclerAdapter(
         holder.locationName.setText(currentLocation.name)
         holder.locationAddress.setText(currentLocation.address)
         if(currentLocation.ImageId!=null){
-            holder.locationImage.setImageResource(currentLocation.ImageId!!)
+            val fileName:String = "${currentLocation.imageName.toString()}.jpg"
+            val recyclerImage = imagesRef.child(fileName)
+            Glide.with(context).load(recyclerImage).into(holder.locationImage)
         }else{
             holder.locationImage.visibility = View.GONE
         }

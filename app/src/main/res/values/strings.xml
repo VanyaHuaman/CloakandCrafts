@@ -6,5 +6,6 @@
     <string name="section_cocktails">Cocktail Bars</string>
     <string name="section_speakeasy">Speakeasy Bars</string>
     <string name="section_withFood">Cocktail Bars w Food</string>
+    <string name="contact">Contact Us</string>
 
 </resources>
