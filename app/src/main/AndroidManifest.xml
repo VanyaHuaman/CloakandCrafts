@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -26,6 +28,7 @@
         <activity android:name=".Activities.CocktailsActivity" />
         <activity android:name=".Activities.SpeakeasyActivity" />
         <activity android:name=".Activities.DetailActivity" />
+        <activity android:name=".Activities.SettingsActivity" />
     </application>
 
 </manifest>
