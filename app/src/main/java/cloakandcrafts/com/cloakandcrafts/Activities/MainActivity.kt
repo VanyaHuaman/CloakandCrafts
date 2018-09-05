@@ -1,28 +1,23 @@
 package cloakandcrafts.com.cloakandcrafts.Activities
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity.Companion.REQUEST_PERMISSIONS_REQUEST_CODE
 import cloakandcrafts.com.cloakandcrafts.Adapters.SectionPagerAdapter
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,8 +33,8 @@ var withFoodArray : ArrayList<BarLocation>? = ArrayList()
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val TAG = "MainActivity"
-        val REQUEST_PERMISSIONS_REQUEST_CODE = 34
+        const val TAG = "MainActivity"
+        const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
     }
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var db : FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -60,9 +55,6 @@ class MainActivity : AppCompatActivity() {
         tabs.setupWithViewPager(viewpager)
 
         milesValue = getPrefMiles()
-
-
-
 
         db.collection("locations")
                 .get()
@@ -213,15 +205,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkPermissions() =
-            ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED
 
     private fun startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_COARSE_LOCATION),
+        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION),
                 REQUEST_PERMISSIONS_REQUEST_CODE)
     }
 
     private fun requestPermissions() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_COARSE_LOCATION)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
             startLocationPermissionRequest()
         } else {
             Log.i(TAG, "Requesting permission")
@@ -242,11 +234,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
-
 
 
 }
