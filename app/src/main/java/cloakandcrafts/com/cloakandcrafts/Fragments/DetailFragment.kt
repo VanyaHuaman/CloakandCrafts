@@ -3,6 +3,11 @@ package cloakandcrafts.com.cloakandcrafts.Fragments
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
+import android.media.Image
+import android.media.ImageWriter
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,7 +15,14 @@ import android.view.*
 import cloakandcrafts.com.cloakandcrafts.Activities.SettingsActivity
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
+import cloakandcrafts.com.cloakandcrafts.Utilities.ImplicitIntents
+import com.bumptech.glide.Glide
+import com.bumptech.glide.GlideBuilder
+import com.bumptech.glide.load.resource.transcode.BitmapBytesTranscoder
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_details.view.*
+import java.io.File
 
 class DetailFragment : Fragment(){
 
@@ -22,6 +34,7 @@ class DetailFragment : Fragment(){
 
     private var mColor: Int = 0
     private var mLocation: BarLocation = BarLocation()
+    private var image:Bitmap? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -29,6 +42,8 @@ class DetailFragment : Fragment(){
                 inflater.inflate(R.layout.activity_details, container, false)
 
         getIntentData()
+        var storageRef = FirebaseStorage.getInstance().reference
+        var imagesRef : StorageReference = storageRef.child("locationImages")
 
         rootView.detail_locationTitle.setText(mLocation.name)
         rootView.detail_locationTitle.setBackgroundColor(mColor)
@@ -37,21 +52,14 @@ class DetailFragment : Fragment(){
         rootView.detail_address.setText(mLocation.address)
         rootView.detail_phoneNumber.setText(mLocation.phoneNumber)
 
-        val hours:String="Hours: ${mLocation.hours}\n\n"
+        val hours="Hours: ${mLocation.hours}\n\n"
         rootView.detail_reviewTextView.setText(hours)
 
         if(mLocation.review!=null) {
             val stringHolder:String = rootView.detail_reviewTextView.text.toString()
-            val reviewText:String = "${stringHolder} ${mLocation.review}"
+            val reviewText = "${stringHolder} ${mLocation.review}"
             rootView.detail_reviewTextView.setText(reviewText)
         }
-
-        //attach downloaded image (possible passed through intent)
-//        if(mLocation.ImageId==null){
-//            rootView.detail_locationImage.visibility = View.GONE
-//        }else {
-//            rootView.detail_locationImage.setImageResource(mLocation.imageName)
-//        }
 
         if(mLocation.websiteUrl==null){
             rootView.detail_websiteButton.visibility = View.GONE
@@ -61,11 +69,22 @@ class DetailFragment : Fragment(){
             }
         }
 
-
-
+        if(mLocation.imageId!=null){
+            val fileName = "${mLocation.imageName}.jpg"
+            val recyclerImage = imagesRef.child(fileName)
+            Glide.with(context!!).load(recyclerImage).into(rootView.detail_locationImage)
+        }
 
         rootView.detail_facebookButton.setOnClickListener{
             openFacebook(context!!,mLocation.facebookUrl.toString())
+        }
+
+        rootView.detail_address.setOnClickListener {
+            ImplicitIntents.newInstance().openMap(context!!, mLocation)
+        }
+
+        rootView.detail_phoneNumber.setOnClickListener {
+            ImplicitIntents.newInstance().openCall(context!!, mLocation.phoneNumber.toString())
         }
 
         rootView.fabButton.setOnClickListener { view ->
@@ -85,14 +104,10 @@ class DetailFragment : Fragment(){
         return rootView
     }
 
-
-
     fun getIntentData(){
         mColor = activity!!.intent.getIntExtra("color",0)
         mLocation = activity!!.intent.getSerializableExtra("location") as BarLocation
     }
-
-
 
     fun openWebPage(url:String){
         val uris = Uri.parse(url)

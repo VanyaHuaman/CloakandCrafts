@@ -1,6 +1,9 @@
 package cloakandcrafts.com.cloakandcrafts.Fragments
 
+import android.content.Context.MODE_PRIVATE
+import android.location.Location
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -26,25 +29,30 @@ class CocktailsFragment : Fragment() {
             return CocktailsFragment()
         }
     }
-
+    var RUNNING:Boolean = false
+    var milesValue:Int? = null
+    var userLatitude:Double? = null
+    var userLongitude:Double? = null
     var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     var dbReference : CollectionReference = db.collection("locations")
     var mRecyclerAdapter:RecyclerAdapter? = null
+    var query:Query? = null
+    var newQuery:Query? = null
+    var rootView : View? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.i("MAINACTIVITY","Cocktail Fragment STARTED!!!!!!!!!!!!!!!!!!")
-        val rootView : View =
+        rootView  =
                 inflater.inflate(R.layout.location_recycler_list, container, false)
 
-        rootView.sectionTextView.setText(R.string.section_cocktails)
-        val color : Int = ContextCompat.getColor(rootView.context,R.color.section_cocktails)
-        rootView.sectionTextView.setBackgroundColor(color)
+        rootView!!.sectionTextView.setText(R.string.section_cocktails)
+        val color : Int = ContextCompat.getColor(rootView!!.context,R.color.section_cocktails)
+        rootView!!.sectionTextView.setBackgroundColor(color)
 
-        var query:Query = dbReference.whereEqualTo("speakeasy",false)
+        query = dbReference.whereEqualTo("speakeasy",false)
 
-        setUpRecyclerView(rootView,query)
-
+        setUpRecyclerView(rootView!!,query!!)
         return rootView
     }
 
@@ -53,18 +61,74 @@ class CocktailsFragment : Fragment() {
         mRecyclerAdapter!!.startListening()
     }
 
-    fun setUpRecyclerView(v:View,query:Query){
+    override fun onResume() {
+        super.onResume()
+        if(RUNNING){
+            RUNNING=true
+            setUpRecyclerView(rootView!!,query!!)
+        }
+    }
+
+    fun setUpRecyclerView(v:View, query:Query){
+
         val options: FirestoreRecyclerOptions<BarLocation> =
                 FirestoreRecyclerOptions.Builder<BarLocation>()
                         .setQuery(query,BarLocation::class.java)
                         .build()
 
-        mRecyclerAdapter = RecyclerAdapter(options)
+        milesValue = getPrefMiles()
+        userLatitude = getUserLatitude()
+        userLongitude = getUserLongitude()
+
+
+        mRecyclerAdapter = RecyclerAdapter(options!!)
         val recyclerView:RecyclerView = v.findViewById(R.id.recycler_view)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(v.context)
         recyclerView.adapter = mRecyclerAdapter
+
     }
 
+    fun isInRange(userLatitude:Double,userLongitude:Double,latitude:Double,longitude:Double):Boolean{
+        val userLocation = Location("point A")
+        userLocation.latitude = userLatitude
+        userLocation.longitude = userLongitude
+        val location = Location("point B")
+        location.latitude = latitude
+        location.longitude = longitude
 
+        Log.i("Distance","User latitude: ${userLocation.latitude}")
+        Log.i("Distance","User Longitude: ${userLocation.longitude}")
+
+        Log.i("Distance","Location latitude: ${location.latitude.toString()}")
+        Log.i("Distance","Location Longitude: ${location.longitude.toString()}")
+
+        val distance:Double = (userLocation.distanceTo(location)/1609.34)
+        Log.i("Distance","Distance in miles: $distance")
+        if(distance<=getPrefMiles()){
+            return true
+        }
+        return false
+    }
+
+    fun getPrefMiles():Int{
+        val sharedPref = activity?.getPreferences(MODE_PRIVATE)
+        val prefMiles:Int = sharedPref!!.getInt("miles", 99)
+        Log.i("distance","Retrieved Miles: $prefMiles")
+        return prefMiles
+    }
+
+    fun getUserLatitude():Double{
+        val sharedPref = activity?.getPreferences(MODE_PRIVATE)
+        val latitude:Double = sharedPref!!.getString("userLatitude", "0").toDouble()
+        Log.i("distance","Retrieved latitude: $latitude")
+        return latitude
+    }
+
+    fun getUserLongitude():Double{
+        val sharedPref = activity?.getPreferences(MODE_PRIVATE)
+        val longitude:Double = sharedPref!!.getString("userLongitude", "0").toDouble()
+        Log.i("distance","Retrieved longitude: $longitude")
+        return longitude
+    }
 }

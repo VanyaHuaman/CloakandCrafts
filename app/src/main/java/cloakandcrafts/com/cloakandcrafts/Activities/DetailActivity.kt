@@ -1,15 +1,18 @@
 package cloakandcrafts.com.cloakandcrafts.Activities
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import cloakandcrafts.com.cloakandcrafts.Fragments.DetailFragment
 import cloakandcrafts.com.cloakandcrafts.R
+import cloakandcrafts.com.cloakandcrafts.Utilities.ImplicitIntents
+import com.firebase.ui.auth.AuthUI
 
 class DetailActivity : AppCompatActivity(){
+
+    private val implicitIntent = ImplicitIntents.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,23 +34,14 @@ class DetailActivity : AppCompatActivity(){
                 return true
             }
             R.id.action_contact -> {
-                openEmail()
+                implicitIntent.openEmail(this)
+                return true
+            }
+            R.id.action_signout -> {
+                AuthUI.getInstance().signOut(this)
                 return true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun openEmail() {
-        val emailAddress= arrayOf("Contact@cloakandcrafts.com")
-        val emailSubject = "Cloak & Crafts"
-
-        val intent = Intent(Intent.ACTION_SENDTO)
-        intent.data = Uri.parse("mailto:") // only email apps should handle this
-        intent.putExtra(Intent.EXTRA_EMAIL,emailAddress)
-        intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
         }
     }
 
@@ -55,4 +49,5 @@ class DetailActivity : AppCompatActivity(){
         val intent: Intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
 }

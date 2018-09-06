@@ -2,18 +2,20 @@ package cloakandcrafts.com.cloakandcrafts.Adapters
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import cloakandcrafts.com.cloakandcrafts.Activities.DetailActivity
-import cloakandcrafts.com.cloakandcrafts.Activities.imagesRef
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
 import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.list_item.view.*
 
 class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : FirestoreRecyclerAdapter<BarLocation, RecyclerAdapter.customHolder>(options) {
@@ -30,8 +32,12 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : Firestor
         holder.locationName.setText(model.name)
         holder.locationAddress.setText(model.address)
         val colorResourceID=getColor(model)
-        if(model.ImageId!=null){
-            val fileName = "${model.imageName.toString()}.jpg"
+
+        var storageRef = FirebaseStorage.getInstance().reference
+        var imagesRef : StorageReference = storageRef.child("locationImages")
+
+        if(model.imageId!=null){
+            val fileName = "${model.imageName}.jpg"
             val recyclerImage = imagesRef.child(fileName)
             Glide.with(context!!).load(recyclerImage).into(holder.locationImage)
         }else{
@@ -39,7 +45,7 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : Firestor
         }
 
         holder.parentLayout.setOnClickListener{
-            val intent:Intent = Intent(context, DetailActivity::class.java)
+            val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("location", model)
             intent.putExtra("color", colorResourceID)
             context!!.startActivity(intent)

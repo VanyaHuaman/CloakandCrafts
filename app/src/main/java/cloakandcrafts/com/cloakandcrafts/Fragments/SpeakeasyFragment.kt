@@ -63,5 +63,6 @@ class SpeakeasyFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(v.context)
         recyclerView.adapter = mRecyclerAdapter
+
     }
 }

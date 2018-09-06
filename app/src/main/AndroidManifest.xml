@@ -29,6 +29,7 @@
         <activity android:name=".Activities.SpeakeasyActivity" />
         <activity android:name=".Activities.DetailActivity" />
         <activity android:name=".Activities.SettingsActivity" />
+        <activity android:name=".Utilities.ImplicitIntents" />
     </application>
 
 </manifest>

@@ -10,7 +10,7 @@
     <TextView
         android:id="@+id/detail_locationTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="@color/colorPrimary"
         android:textAlignment="center"
         android:textColor="@android:color/white"
@@ -31,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detail_locationTitle"
-        app:srcCompat="@android:color/holo_red_dark" />
+        app:srcCompat="@android:color/darker_gray" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -90,6 +90,8 @@
         <TextView
             android:id="@+id/detail_address"
             style="@style/detail_info_style"
+            android:clickable="true"
+            android:textColor="@android:color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -104,6 +106,8 @@
         <TextView
             android:id="@+id/detail_phoneNumber"
             style="@style/detail_info_style"
+            android:textColor="@android:color/black"
+            android:clickable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

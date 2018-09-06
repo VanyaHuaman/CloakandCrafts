@@ -1,6 +1,6 @@
 package cloakandcrafts.com.cloakandcrafts.Activities
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -24,6 +24,7 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
     }
 
+
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         settings_amountMiles.setText(progress.toString())
     }
@@ -37,18 +38,21 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     fun setPrefMiles(value:Int){
-        val sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE)
-        val editor = sp.edit()
-        editor.putInt("miles", value)
-        editor.commit()
-
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        with (sharedPref.edit()) {
+            putInt("miles", value)
+            commit()
+        }
         Log.i("Settings", "Miles saved to pref: $value")
     }
 
     fun getPrefMiles():Int{
-        val sp = getSharedPreferences("prefs", Activity.MODE_PRIVATE)
-        val prefMiles:Int = sp.getInt("miles", 0)
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        val prefMiles:Int = sharedPref.getInt("miles", 99)
+        Log.i("distance","Retrieved Miles: $prefMiles")
         return prefMiles
     }
+
+
 
 }

@@ -16,7 +16,7 @@ data class BarLocation(
         var phoneNumber:String? = null,
         var hours:String? = null,
         var imageName:String = "",
-        var ImageId:Int? = null
+        var imageId:Int? = null
 ): Serializable
 
 
