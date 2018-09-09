@@ -2,7 +2,6 @@ package cloakandcrafts.com.cloakandcrafts.Adapters
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -20,7 +19,7 @@ import kotlinx.android.synthetic.main.list_item.view.*
 
 class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : FirestoreRecyclerAdapter<BarLocation, RecyclerAdapter.customHolder>(options) {
 
-    var context:Context? = null
+    lateinit var context:Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): customHolder {
         val v:View = LayoutInflater.from(parent.context).inflate(R.layout.list_item,parent,false)
@@ -33,36 +32,40 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : Firestor
         holder.locationAddress.setText(model.address)
         val colorResourceID=getColor(model)
 
-        var storageRef = FirebaseStorage.getInstance().reference
-        var imagesRef : StorageReference = storageRef.child("locationImages")
+        //Firestore variables
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imagesRef : StorageReference = storageRef.child("locationImages")
 
+        //checks and sets image
         if(model.imageId!=null){
             val fileName = "${model.imageName}.jpg"
             val recyclerImage = imagesRef.child(fileName)
-            Glide.with(context!!).load(recyclerImage).into(holder.locationImage)
+            Glide.with(context).load(recyclerImage).into(holder.locationImage)
         }else{
             holder.locationImage.visibility = View.GONE
         }
 
+        //onClick listener
         holder.parentLayout.setOnClickListener{
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra("location", model)
             intent.putExtra("color", colorResourceID)
-            context!!.startActivity(intent)
+            context.startActivity(intent)
         }
     }
 
     private fun getColor(model:BarLocation): Int {
+        //returns the color based on the type of category
         if(model.food){
-            return ContextCompat.getColor(context!!,R.color.section_withFood)
+            return ContextCompat.getColor(context,R.color.section_withFood)
         }else if(model.speakeasy){
-            return ContextCompat.getColor(context!!,R.color.section_speakeasy)
+            return ContextCompat.getColor(context,R.color.section_speakeasy)
         }else{
-            return ContextCompat.getColor(context!!,R.color.section_cocktails)
+            return ContextCompat.getColor(context,R.color.section_cocktails)
         }
     }
 
-
+    //Custom view Holder Class
     class customHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val parentLayout = itemView.rootLayout
         val locationName = itemView.locationName_textView

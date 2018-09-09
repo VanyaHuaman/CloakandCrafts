@@ -19,14 +19,12 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
         settings_seekBar.setOnSeekBarChangeListener(this)
         miles = getPrefMiles()
-        settings_amountMiles.setText(miles.toString())
-        settings_seekBar.setProgress(miles)
-
+        settings_amountMiles.setText(miles)
+        settings_seekBar.progress = miles
     }
 
-
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        settings_amountMiles.setText(progress.toString())
+        settings_amountMiles.setText(progress)
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -38,6 +36,7 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     fun setPrefMiles(value:Int){
+        //sets the miles value in Preferences
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         with (sharedPref.edit()) {
             putInt("miles", value)
@@ -47,12 +46,10 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     fun getPrefMiles():Int{
+        //returns the miles value from Preferences
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         val prefMiles:Int = sharedPref.getInt("miles", 99)
         Log.i("distance","Retrieved Miles: $prefMiles")
         return prefMiles
     }
-
-
-
 }

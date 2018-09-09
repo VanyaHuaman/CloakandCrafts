@@ -2,7 +2,6 @@ package cloakandcrafts.com.cloakandcrafts.Activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import cloakandcrafts.com.cloakandcrafts.Fragments.WithFoodFragment
 import cloakandcrafts.com.cloakandcrafts.R
 
