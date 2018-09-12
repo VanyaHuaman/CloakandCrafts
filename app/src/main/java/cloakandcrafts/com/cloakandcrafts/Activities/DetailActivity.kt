@@ -1,5 +1,6 @@
 package cloakandcrafts.com.cloakandcrafts.Activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +13,6 @@ import com.firebase.ui.auth.AuthUI
 
 class DetailActivity : AppCompatActivity(){
 
-    private val implicitIntent = ImplicitIntents.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class DetailActivity : AppCompatActivity(){
                 return true
             }
             R.id.action_contact -> {
-                implicitIntent.openEmail(this)
+                ImplicitIntents.openEmail(this)
                 return true
             }
             R.id.action_signout -> {
@@ -46,7 +46,7 @@ class DetailActivity : AppCompatActivity(){
     }
 
     fun openSettings(){
-        val intent: Intent = Intent(this, SettingsActivity::class.java)
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 

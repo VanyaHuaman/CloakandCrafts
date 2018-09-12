@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import cloakandcrafts.com.cloakandcrafts.Fragments.CocktailsFragment
 import cloakandcrafts.com.cloakandcrafts.R
 
-class CocktailsActivity :AppCompatActivity() {
+class CocktailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

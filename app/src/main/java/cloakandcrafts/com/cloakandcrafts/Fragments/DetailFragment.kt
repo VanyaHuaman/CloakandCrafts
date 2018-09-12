@@ -75,11 +75,11 @@ class DetailFragment : Fragment(){
         }
 
         rootView.detail_address.setOnClickListener {
-            ImplicitIntents.newInstance().openMap(context, mLocation)
+            ImplicitIntents.openMap(context, mLocation)
         }
 
         rootView.detail_phoneNumber.setOnClickListener {
-            ImplicitIntents.newInstance().openCall(context, mLocation.phoneNumber.toString())
+            ImplicitIntents.openCall(context, mLocation.phoneNumber.toString())
         }
 
         rootView.fabButton.setOnClickListener { view ->

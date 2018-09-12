@@ -31,8 +31,8 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
     }
 
-    override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        setPrefMiles(seekBar!!.progress)
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
+        setPrefMiles(seekBar.progress)
     }
 
     fun setPrefMiles(value:Int){
@@ -40,7 +40,7 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
         val sharedPref = getPreferences(Context.MODE_PRIVATE)
         with (sharedPref.edit()) {
             putInt("miles", value)
-            commit()
+                    .apply()
         }
         Log.i("Settings", "Miles saved to pref: $value")
     }

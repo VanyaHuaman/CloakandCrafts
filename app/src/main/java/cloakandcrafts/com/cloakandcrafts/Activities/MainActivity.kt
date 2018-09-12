@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
         const val TAG = "MainActivity"
         const val REQUEST_PERMISSIONS_REQUEST_CODE = 34
         var RC_SIGN_IN = 1
-        var mFirebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        lateinit var mAuthStateListener: FirebaseAuth.AuthStateListener
+        var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        lateinit var authStateListener: FirebaseAuth.AuthStateListener
         var auth = FirebaseAuth.getInstance()
     }
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         //checks if user is signed in
-        mAuthStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             if (user == null) {
                 startActivityForResult(
@@ -80,12 +80,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener!!)
+        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
     override fun onPause() {
         super.onPause()
-        mFirebaseAuth.removeAuthStateListener(mAuthStateListener!!)
+        firebaseAuth.removeAuthStateListener(authStateListener)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_contact -> {
-                ImplicitIntents.newInstance().openEmail(this)
+                ImplicitIntents.openEmail(this)
                 return true
             }
             R.id.action_signout -> {
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun openSettings(){
-        val intent:Intent = Intent(this, SettingsActivity::class.java)
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
@@ -149,15 +149,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkPermissions() =
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+        ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MainActivity.REQUEST_PERMISSIONS_REQUEST_CODE)
     }
 
     private fun requestPermissions() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
             startLocationPermissionRequest()
         } else {
             Log.i(MainActivity.TAG, "Requesting permission")

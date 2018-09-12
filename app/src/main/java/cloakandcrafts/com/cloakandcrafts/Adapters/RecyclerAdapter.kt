@@ -28,9 +28,9 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : Firestor
     }
 
     override fun onBindViewHolder(holder: customHolder, position: Int, model: BarLocation) {
-        holder.locationName.setText(model.name)
-        holder.locationAddress.setText(model.address)
-        val colorResourceID=getColor(model)
+        holder.locationName.text = model.name
+        holder.locationAddress.text = model.address
+        val colorResourceID = getColor(model)
 
         //Firestore variables
         val storageRef = FirebaseStorage.getInstance().reference

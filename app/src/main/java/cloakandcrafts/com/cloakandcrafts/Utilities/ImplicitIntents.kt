@@ -7,13 +7,8 @@ import android.support.v4.content.ContextCompat.startActivity
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 
 
-class  ImplicitIntents() {
+object ImplicitIntents {
 
-    companion object {
-        fun newInstance(): ImplicitIntents {
-            return ImplicitIntents()
-        }
-    }
 
     fun openEmail(context:Context) {
         val emailAddress= arrayOf("Contact@cloakandcrafts.com")
