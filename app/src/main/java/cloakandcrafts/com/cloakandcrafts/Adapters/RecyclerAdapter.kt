@@ -42,7 +42,8 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : Firestor
             val recyclerImage = imagesRef.child(fileName)
             Glide.with(context).load(recyclerImage).into(holder.locationImage)
         }else{
-            holder.locationImage.visibility = View.GONE
+
+            Glide.with(context).load(R.drawable.default_loc_image).into(holder.locationImage)
         }
 
         //onClick listener

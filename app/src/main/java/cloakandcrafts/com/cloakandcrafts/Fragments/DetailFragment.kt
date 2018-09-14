@@ -15,6 +15,7 @@ import cloakandcrafts.com.cloakandcrafts.Utilities.ImplicitIntents
 import com.bumptech.glide.Glide
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.android.synthetic.main.activity_details.*
 import kotlinx.android.synthetic.main.activity_details.view.*
 
 class DetailFragment : Fragment(){
@@ -67,6 +68,8 @@ class DetailFragment : Fragment(){
             val fileName = "${mLocation.imageName}.jpg"
             val recyclerImage = imagesRef.child(fileName)
             Glide.with(context).load(recyclerImage).into(rootView.detail_locationImage)
+        }else{
+            Glide.with(context).load(R.drawable.default_loc_image).into(rootView.detail_locationImage)
         }
 
         //onClick listeners
@@ -86,11 +89,11 @@ class DetailFragment : Fragment(){
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT,
-                        "$mLocation.name" +
+                        "${mLocation.name}" +
                                 System.getProperty("line.separator")+
-                                "$mLocation.address" +
+                                "${mLocation.address}" +
                                 System.getProperty("line.separator")+
-                                "$mLocation.phoneNumber")
+                                "${mLocation.phoneNumber}")
                 type = "text/plain"
             }
             startActivity(Intent.createChooser(sendIntent,null))

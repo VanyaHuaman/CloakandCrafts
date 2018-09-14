@@ -19,12 +19,12 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
         settings_seekBar.setOnSeekBarChangeListener(this)
         miles = getPrefMiles()
-        settings_amountMiles.setText(miles)
+        settings_amountMiles.text = miles.toString()
         settings_seekBar.progress = miles
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        settings_amountMiles.setText(progress)
+        settings_amountMiles.text = progress.toString()
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
