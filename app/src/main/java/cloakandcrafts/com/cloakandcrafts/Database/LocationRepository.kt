@@ -9,11 +9,17 @@ class LocationRepository internal constructor(application: Application){
 
     private val locationDao : LocationDao
     val allLocations : LiveData<List<BarLocation>>
+    val allSpeakeasys : LiveData<List<BarLocation>>
+    val allCocktailBars : LiveData<List<BarLocation>>
+    val allBarsWithFood : LiveData<List<BarLocation>>
 
     init {
         val db = LocationRoomDatabase.getDatabase(application)
         locationDao = db.locationDao()
         allLocations = locationDao.allLocations()
+        allSpeakeasys = locationDao.allSpeakeasys()
+        allCocktailBars = locationDao.allCocktailBars()
+        allBarsWithFood = locationDao.allBarsWithFood()
     }
 
     fun deleteAll() {

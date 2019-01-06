@@ -8,10 +8,16 @@ import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 class LocationViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: LocationRepository = LocationRepository(application)
-    val allStores: LiveData<List<BarLocation>>
+    val allLocations: LiveData<List<BarLocation>>
+    val allSpeakeasys : LiveData<List<BarLocation>>
+    val allCocktailBars : LiveData<List<BarLocation>>
+    val allBarsWithFood : LiveData<List<BarLocation>>
 
     init {
-        allStores = repository.allLocations
+        allLocations = repository.allLocations
+        allSpeakeasys = repository.allSpeakeasys
+        allCocktailBars = repository.allCocktailBars
+        allBarsWithFood = repository.allBarsWithFood
     }
 
     fun insert(store: BarLocation) {

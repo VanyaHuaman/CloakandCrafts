@@ -1,6 +1,8 @@
 package cloakandcrafts.com.cloakandcrafts.Fragments
 
 import android.app.Activity
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context.MODE_PRIVATE
 import android.location.Location
 import android.os.Bundle
@@ -13,81 +15,53 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity
 import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
+import cloakandcrafts.com.cloakandcrafts.Database.LocationViewModel
 import cloakandcrafts.com.cloakandcrafts.R
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.location_recycler_list.view.*
 
 abstract class LocationFragment : Fragment() {
+
+    lateinit var rootView : View
+    abstract var fragmentName:String
+    abstract var parentActivity:Activity
 
     var milesValue:Int? = null
     var userLatitude:Double? = null
     var userLongitude:Double? = null
     lateinit var currentGeoPoint: GeoPoint
-    abstract var fragmentName:String
 
-    //Firestore variables
-    var db : FirebaseFirestore = FirebaseFirestore.getInstance()
-    var dbReference : CollectionReference = db.collection("locations")
-    lateinit var options: FirestoreRecyclerOptions<BarLocation>
-    lateinit var recyclerAdapter: RecyclerAdapter
-    lateinit var recyclerView: RecyclerView
 
-    //variables used to pass into setUpRecyclerView()
-    lateinit var query : Query
-    lateinit var rootView : View
+    lateinit var locationViewModel: LocationViewModel
+    lateinit var recyclerView : RecyclerView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getPrefMiles()
         currentGeoPoint = getUserGeoPoint()
-
-        db = FirebaseFirestore.getInstance()
-        dbReference = db.collection("locations")
-
-        setFragmentQuery(fragmentName)
-
+        locationViewModel = ViewModelProviders.of(activity!!).get(LocationViewModel::class.java)
     }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView  =
                 inflater.inflate(R.layout.location_recycler_list, container, false)
-        setUpRecyclerView(rootView,query)
+
+        recyclerView = rootView.recycler_view
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
         setFragmentTitle(fragmentName)
         setFragmentColor(fragmentName)
+        loadRecyclerView(fragmentName)
 
         return rootView
     }
 
-    override fun onStart() {
-        super.onStart()
-        recyclerAdapter.startListening()
-    }
 
 
-    fun setUpRecyclerView(v:View, query:Query){
-        //sets up the Recycler View
-        milesValue = getPrefMiles()
-        userLatitude = getUserLatitude()
-        userLongitude = getUserLongitude()
-        val options: FirestoreRecyclerOptions<BarLocation> =
-                FirestoreRecyclerOptions.Builder<BarLocation>()
-                        .setQuery(query, BarLocation::class.java).build()
-
-        val activity : Activity = activity as MainActivity
-        recyclerAdapter = RecyclerAdapter(options,activity)
-        val recyclerView: RecyclerView = v.findViewById(R.id.recycler_view)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(v.context)
-        recyclerView.adapter = recyclerAdapter
-    }
 
     fun isInRange(userLatitude:Double,userLongitude:Double,latitude:Double,longitude:Double):Boolean{
         //checks if Location('point B') is within radius of user location('point A')
@@ -161,7 +135,7 @@ abstract class LocationFragment : Fragment() {
         rootView.sectionTextView.text = name
     }
 
-    fun setFragmentQuery(fragmentName: String){
+    fun loadRecyclerView(fragmentName: String){
         val name:String
         val bool:Boolean
         when (fragmentName) {
@@ -177,8 +151,44 @@ abstract class LocationFragment : Fragment() {
         Log.i("Fragment","Passed Name: $name")
         Log.i("Fragment","Passed Bool: $bool")
 
-        query = dbReference.whereEqualTo(name,bool)
+        when (fragmentName){
+            "cocktails" -> loadCocktailBars()
+            "withFood" -> loadBarsWithFood()
+            "speakeasy" -> loadSpeakeays()
+        }
+    }
 
+    fun loadSpeakeays(){
+        locationViewModel
+                .allSpeakeasys
+                .observe(activity!!, Observer<List<BarLocation>>() {
+                    if(it != null){
+                        recyclerView.adapter = RecyclerAdapter(it as MutableList<BarLocation>,parentActivity)
+                        recyclerView.adapter.notifyDataSetChanged()
+
+                    }
+                })
+    }
+
+    fun loadCocktailBars(){
+        locationViewModel
+                .allCocktailBars
+                .observe(activity!!, Observer<List<BarLocation>>() {
+                    if(it != null){
+                        recyclerView.adapter = RecyclerAdapter(it as MutableList<BarLocation>,parentActivity)
+                        recyclerView.adapter.notifyDataSetChanged()
+                    }
+                })
+    }
+    fun loadBarsWithFood(){
+        locationViewModel
+                .allBarsWithFood
+                .observe(activity!!, Observer<List<BarLocation>>() {
+                    if(it != null){
+                        recyclerView.adapter = RecyclerAdapter(it as MutableList<BarLocation>,parentActivity)
+                        recyclerView.adapter.notifyDataSetChanged()
+                    }
+                })
     }
 
 }

@@ -13,16 +13,15 @@ import cloakandcrafts.com.cloakandcrafts.Activities.DetailActivity
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
 import com.bumptech.glide.Glide
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>, activity:Activity) : FirestoreRecyclerAdapter<BarLocation, RecyclerAdapter.customHolder>(options) {
+class RecyclerAdapter(locationArray: MutableList<BarLocation>, activity:Activity) : RecyclerView.Adapter<RecyclerAdapter.customHolder>() {
 
     lateinit var context:Context
     var passedActivity = activity
+    var locations = locationArray
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): customHolder {
         val v:View = LayoutInflater.from(parent.context).inflate(R.layout.list_item,parent,false)
@@ -30,18 +29,21 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>, activity:A
         return customHolder(v)
     }
 
-    override fun onBindViewHolder(holder: customHolder, position: Int, model: BarLocation) {
-        holder.locationName.text = model.name
-        holder.locationAddress.text = model.address
-        val colorResourceID = getColor(model)
+    override fun getItemCount(): Int {
+        return locations.size
+    }
 
-        //Firestore variables
+    override fun onBindViewHolder(holder: customHolder, position: Int) {
+        holder.locationName.text = locations[position].name
+        holder.locationAddress.text = locations[position].address
+        val colorResourceID = getColor(locations[position])
+
         val storageRef = FirebaseStorage.getInstance().reference
         val imagesRef : StorageReference = storageRef.child("locationImages")
 
         //checks and sets image
-        if(model.imageId!=null){
-            val fileName = "${model.imageName}.jpg"
+        if(locations[position].imageId!=null){
+            val fileName = "${locations[position].imageName}.jpg"
             val recyclerImage = imagesRef.child(fileName)
             Glide.with(context).load(recyclerImage).into(holder.locationImage)
         }else{
@@ -55,11 +57,14 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>, activity:A
             val options = ActivityOptions.makeSceneTransitionAnimation(
                     passedActivity, holder.locationImage,"locationImage"
             )
-            intent.putExtra("location", model)
+            intent.putExtra("location", locations[position])
             intent.putExtra("color", colorResourceID)
             context.startActivity(intent,options.toBundle())
         }
     }
+
+
+
 
     private fun getColor(model:BarLocation): Int {
         //returns the color based on the type of category

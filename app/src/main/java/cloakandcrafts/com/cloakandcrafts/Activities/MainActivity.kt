@@ -3,23 +3,33 @@ package cloakandcrafts.com.cloakandcrafts.Activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.nfc.Tag
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity.Companion.RC_SIGN_IN
+import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity.Companion.authStateListener
+import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity.Companion.firebaseAuth
 import cloakandcrafts.com.cloakandcrafts.Adapters.SectionPagerAdapter
+import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
+import cloakandcrafts.com.cloakandcrafts.Database.LocationViewModel
 import cloakandcrafts.com.cloakandcrafts.R
 import cloakandcrafts.com.cloakandcrafts.Utilities.ImplicitIntents
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
@@ -33,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
         lateinit var authStateListener: FirebaseAuth.AuthStateListener
         var auth = FirebaseAuth.getInstance()
+        lateinit var locationViewModel : LocationViewModel
     }
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -41,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        locationViewModel =
+                ViewModelProviders.of(this@MainActivity).get(LocationViewModel::class.java)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -74,8 +88,16 @@ class MainActivity : AppCompatActivity() {
         if (!checkPermissions()) {
             requestPermissions()
         } else {
-            getLastLocation()
+            var db : FirebaseFirestore = FirebaseFirestore.getInstance()
+            var dbReference = db.collection("locations").get().addOnSuccessListener { documents ->
+                var locations = documents.toObjects(BarLocation::class.java)
+                locations.forEach {
+                    locationViewModel.insert(it)
+                }
+            }
         }
+        getLastLocation()
+
     }
 
     override fun onResume() {
