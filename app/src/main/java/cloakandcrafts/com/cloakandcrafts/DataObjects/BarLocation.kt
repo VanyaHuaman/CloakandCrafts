@@ -1,8 +1,14 @@
 package cloakandcrafts.com.cloakandcrafts.DataObjects
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import java.io.Serializable
 
+
+@Entity(tableName = "bar_table")
 data class BarLocation(
+        @PrimaryKey
+        var UQID:Int? = null,
         var speakeasy:Boolean = false,
         var password:Boolean = false,
         var food:Boolean = false,
