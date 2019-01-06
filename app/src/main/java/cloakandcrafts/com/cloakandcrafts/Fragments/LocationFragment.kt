@@ -184,7 +184,14 @@ abstract class LocationFragment : Fragment() {
                 .allCocktailBars
                 .observe(activity!!, Observer<List<BarLocation>>() {
                     if(it != null){
-                        recyclerView.adapter = RecyclerAdapter(it as MutableList<BarLocation>,parentActivity)
+                        var filteredList = mutableListOf<BarLocation>()
+                        it.forEach {bar ->
+                            if(isInRange(userLatitude!!,userLongitude!!,bar.latitude!!,bar.longitude!!)){
+                                filteredList.add(bar)
+                            }
+                        }
+
+                        recyclerView.adapter = RecyclerAdapter(filteredList,parentActivity)
                         recyclerView.adapter.notifyDataSetChanged()
                     }
                 })
@@ -194,7 +201,14 @@ abstract class LocationFragment : Fragment() {
                 .allBarsWithFood
                 .observe(activity!!, Observer<List<BarLocation>>() {
                     if(it != null){
-                        recyclerView.adapter = RecyclerAdapter(it as MutableList<BarLocation>,parentActivity)
+                        var filteredList = mutableListOf<BarLocation>()
+                        it.forEach {bar ->
+                            if(isInRange(userLatitude!!,userLongitude!!,bar.latitude!!,bar.longitude!!)){
+                                filteredList.add(bar)
+                            }
+                        }
+
+                        recyclerView.adapter = RecyclerAdapter(filteredList,parentActivity)
                         recyclerView.adapter.notifyDataSetChanged()
                     }
                 })
