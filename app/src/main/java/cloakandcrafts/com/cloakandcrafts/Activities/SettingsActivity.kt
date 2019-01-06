@@ -2,6 +2,7 @@ package cloakandcrafts.com.cloakandcrafts.Activities
 
 import android.content.Context
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.SeekBar
@@ -23,6 +24,7 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
         settings_seekBar.progress = miles
     }
 
+
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         settings_amountMiles.text = progress.toString()
     }
@@ -37,17 +39,17 @@ class SettingsActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
     fun setPrefMiles(value:Int){
         //sets the miles value in Preferences
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         with (sharedPref.edit()) {
             putInt("miles", value)
-                    .apply()
+                    .commit()
         }
         Log.i("Settings", "Miles saved to pref: $value")
     }
 
     fun getPrefMiles():Int{
         //returns the miles value from Preferences
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         val prefMiles:Int = sharedPref.getInt("miles", 99)
         Log.i("distance","Retrieved Miles: $prefMiles")
         return prefMiles

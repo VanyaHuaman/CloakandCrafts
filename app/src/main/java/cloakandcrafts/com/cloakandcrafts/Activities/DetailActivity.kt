@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.Fragments.DetailFragment
 import cloakandcrafts.com.cloakandcrafts.R
 import cloakandcrafts.com.cloakandcrafts.Utilities.ImplicitIntents

@@ -28,6 +28,7 @@
         android:layout_marginTop="16dp"
         android:cropToPadding="true"
         android:scaleType="centerCrop"
+        android:transitionName="locationImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detail_locationTitle"

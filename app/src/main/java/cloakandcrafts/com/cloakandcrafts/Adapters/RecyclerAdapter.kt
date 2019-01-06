@@ -1,5 +1,7 @@
 package cloakandcrafts.com.cloakandcrafts.Adapters
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat
@@ -17,9 +19,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : FirestoreRecyclerAdapter<BarLocation, RecyclerAdapter.customHolder>(options) {
+class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>, activity:Activity) : FirestoreRecyclerAdapter<BarLocation, RecyclerAdapter.customHolder>(options) {
 
     lateinit var context:Context
+    var passedActivity = activity
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): customHolder {
         val v:View = LayoutInflater.from(parent.context).inflate(R.layout.list_item,parent,false)
@@ -49,9 +52,12 @@ class RecyclerAdapter(options: FirestoreRecyclerOptions<BarLocation>) : Firestor
         //onClick listener
         holder.parentLayout.setOnClickListener{
             val intent = Intent(context, DetailActivity::class.java)
+            val options = ActivityOptions.makeSceneTransitionAnimation(
+                    passedActivity, holder.locationImage,"locationImage"
+            )
             intent.putExtra("location", model)
             intent.putExtra("color", colorResourceID)
-            context.startActivity(intent)
+            context.startActivity(intent,options.toBundle())
         }
     }
 

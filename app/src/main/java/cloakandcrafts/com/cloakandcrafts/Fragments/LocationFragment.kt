@@ -1,8 +1,10 @@
 package cloakandcrafts.com.cloakandcrafts.Fragments
 
-import android.content.Context
+import android.app.Activity
+import android.content.Context.MODE_PRIVATE
 import android.location.Location
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -11,12 +13,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import cloakandcrafts.com.cloakandcrafts.Activities.MainActivity
 import cloakandcrafts.com.cloakandcrafts.Adapters.RecyclerAdapter
 import cloakandcrafts.com.cloakandcrafts.DataObjects.BarLocation
 import cloakandcrafts.com.cloakandcrafts.R
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.location_recycler_list.view.*
 
@@ -25,12 +29,15 @@ abstract class LocationFragment : Fragment() {
     var milesValue:Int? = null
     var userLatitude:Double? = null
     var userLongitude:Double? = null
+    lateinit var currentGeoPoint: GeoPoint
     abstract var fragmentName:String
 
     //Firestore variables
     var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     var dbReference : CollectionReference = db.collection("locations")
+    lateinit var options: FirestoreRecyclerOptions<BarLocation>
     lateinit var recyclerAdapter: RecyclerAdapter
+    lateinit var recyclerView: RecyclerView
 
     //variables used to pass into setUpRecyclerView()
     lateinit var query : Query
@@ -38,19 +45,23 @@ abstract class LocationFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getPrefMiles()
+        currentGeoPoint = getUserGeoPoint()
+
         db = FirebaseFirestore.getInstance()
         dbReference = db.collection("locations")
+
         setFragmentQuery(fragmentName)
+
     }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView  =
                 inflater.inflate(R.layout.location_recycler_list, container, false)
-
+        setUpRecyclerView(rootView,query)
         setFragmentTitle(fragmentName)
         setFragmentColor(fragmentName)
-        setUpRecyclerView(rootView,query)
 
         return rootView
     }
@@ -66,12 +77,12 @@ abstract class LocationFragment : Fragment() {
         milesValue = getPrefMiles()
         userLatitude = getUserLatitude()
         userLongitude = getUserLongitude()
-
         val options: FirestoreRecyclerOptions<BarLocation> =
                 FirestoreRecyclerOptions.Builder<BarLocation>()
                         .setQuery(query, BarLocation::class.java).build()
 
-        recyclerAdapter = RecyclerAdapter(options)
+        val activity : Activity = activity as MainActivity
+        recyclerAdapter = RecyclerAdapter(options,activity)
         val recyclerView: RecyclerView = v.findViewById(R.id.recycler_view)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(v.context)
@@ -104,15 +115,15 @@ abstract class LocationFragment : Fragment() {
 
     fun getPrefMiles():Int{
         //returns miles set in Settings
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-        val prefMiles:Int = sharedPref!!.getInt("miles", 99)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val prefMiles:Int = sharedPref.getInt("miles", 99)
         Log.i("distance","Retrieved Miles: $prefMiles")
         return prefMiles
     }
 
     fun getUserLatitude():Double{
         //returns user location latitude
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        val sharedPref = activity?.getPreferences(MODE_PRIVATE)
         val latitude:Double = sharedPref!!.getString("userLatitude", "0").toDouble()
         Log.i("distance","Retrieved latitude: $latitude")
         return latitude
@@ -120,10 +131,14 @@ abstract class LocationFragment : Fragment() {
 
     fun getUserLongitude():Double{
         //returns user location longitude
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        val sharedPref = activity?.getPreferences(MODE_PRIVATE)
         val longitude:Double = sharedPref!!.getString("userLongitude", "0").toDouble()
         Log.i("distance","Retrieved longitude: $longitude")
         return longitude
+    }
+
+    fun getUserGeoPoint():GeoPoint{
+        return GeoPoint(getUserLatitude(),getUserLongitude())
     }
 
     fun setFragmentColor(fragmentName:String){
@@ -163,6 +178,7 @@ abstract class LocationFragment : Fragment() {
         Log.i("Fragment","Passed Bool: $bool")
 
         query = dbReference.whereEqualTo(name,bool)
+
     }
 
 }
